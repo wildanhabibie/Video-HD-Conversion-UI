@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HD Video Converter Settings</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+            padding: 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        #video-converter-container {
+            max-width: 700px; /* Slightly wider for file input */
+            width: 100%;
+            padding: 30px;
+            border: 1px solid #d1d1d1;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        #video-converter-container h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #1c1e21;
+            font-size: 1.6em;
+            font-weight: 600;
+        }
+
+         #video-converter-container p.intro {
+             margin-bottom: 30px;
+             line-height: 1.6;
+             color: #555;
+             text-align: center;
+             font-size: 0.95em;
+         }
+
+         .file-upload-section {
+             margin-bottom: 25px;
+             padding: 15px;
+             border: 1px dashed #ccc;
+             border-radius: 5px;
+             text-align: center;
+             background-color: #f9f9f9;
+         }
+
+        .file-upload-section label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* Style the file input button */
+        input[type="file"] {
+            display: none; /* Hide the default ugly input */
+        }
+        .file-upload-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.95em;
+        }
+        .file-upload-button:hover {
+            background-color: #0056b3;
+        }
+
+        #file-name-display {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+
+        .setting-section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .setting-section:last-of-type {
+             border-bottom: none;
+             margin-bottom: 15px;
+         }
+
+        .setting-section h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            color: #333;
+            font-size: 1.2em;
+            font-weight: 500;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+
+        .setting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; /* Increased gap */
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .setting-item label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500; /* Medium weight */
+            font-size: 0.9em;
+            color: #4b4f56;
+        }
+
+        .setting-item select,
+        .setting-item input[type="text"] {
+            width: 100%;
+            padding: 10px 12px; /* Slightly larger padding */
+            border: 1px solid #ccd0d5;
+            border-radius: 5px;
+            background-color: #f5f6f7; /* Light grey background */
+            font-size: 0.95em;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .setting-item select:focus,
+        .setting-item input[type="text"]:focus {
+             border-color: #007bff;
+             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+             outline: none;
+             background-color: #fff;
+         }
+
+        .button-container {
+            text-align: right;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .converter-button {
+            padding: 12px 25px; /* Larger buttons */
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            margin-left: 12px;
+            transition: background-color 0.3s ease, box-shadow 0.2s ease;
+        }
+
+        .button-cancel {
+            background-color: #e4e6eb;
+            border: 1px solid #ced0d4;
+            color: #4b4f56;
+        }
+        .button-cancel:hover {
+             background-color: #dcdfe4;
+         }
+
+        .button-convert {
+            background-color: #28a745; /* Green for convert action */
+            color: white;
+        }
+        .button-convert:hover {
+            background-color: #218838;
+            box-shadow: 0 2px 5px rgba(40, 167, 69, 0.4);
+        }
+         .button-convert:disabled {
+             background-color: #a0d5ab;
+             cursor: not-allowed;
+             box-shadow: none;
+         }
+
+        #status-message {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 0.95em;
+            line-height: 1.5;
+            display: none; /* Hidden initially */
+            text-align: center;
+        }
+        #status-message.processing {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+         #status-message.final {
+             background-color: #d1ecf1;
+             border-color: #bee5eb;
+             color: #0c5460;
+         }
+
+
+        @media (max-width: 650px) {
+            #video-converter-container {
+                 padding: 20px;
+             }
+            .setting-grid {
+                grid-template-columns: 1fr; /* Stack on smaller screens */
+            }
+             .button-container {
+                 text-align: center;
+                 padding-top: 15px;
+             }
+            .converter-button {
+                 width: 45%;
+                 margin: 8px 2%;
+                 padding: 10px 15px;
+             }
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="video-converter-container">
+    <h2>Video Converter Settings</h2>
+
+    <p class="intro">
+        <strong>Free HD Video Converter Online Interface</strong><br>
+        Use this interface to select your video file and configure the desired output settings for HD conversion.
+        Please note: Actual conversion process occurs on the server (simulation only in this demo).
+    </p>
+
+    <div class="file-upload-section">
+        <label for="video-file-input">1. Select Your Video File</label>
+        <label for="video-file-input" class="file-upload-button">Choose File</label>
+        <input type="file" id="video-file-input" accept="video/*">
+        <div id="file-name-display">No file selected</div>
+    </div>
+
+
+    <div class="setting-section">
+        <h3>Video Settings</h3>
+        <div class="setting-grid">
+            <div class="setting-item">
+                <label for="video-encoder">Encoder:</label>
+                <select id="video-encoder">
+                    <option value="h264" selected>H.264 (AVC)</option>
+                    <option value="h265">H.265 (HEVC)</option>
+                    <option value="vp9">VP9</option>
+                    <option value="av1">AV1</option>
+                    <option value="mpeg4">MPEG-4</option>
+                    <option value="copy">Copy Stream (No Re-encoding)</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <label for="video-resolution">Resolution:</label>
+                <select id="video-resolution">
+                    <option value="source" selected>Same as source</option>
+                    <option value="1080p">1920x1080 (1080p Full HD)</option>
+                    <option value="720p">1280x720 (720p HD)</option>
+                    <option value="480p">854x480 (480p SD)</option>
+                    <option value="360p">640x360 (360p)</option>
+                    </select>
+            </div>
+            <div class="setting-item">
+                <label for="video-zoom">Aspect Ratio / Zoom:</label>
+                <select id="video-zoom">
+                    <option value="letterbox" selected>Letterbox (Default)</option>
+                    <option value="pan_scan">Pan & Scan</option>
+                    <option value="stretch">Stretch to Fill</option>
+                    <option value="crop">Crop to Fill</option>
+                </select>
+            </div>
+             <div class="setting-item">
+                 <label for="video-framerate">Frame Rate (fps):</label>
+                 <select id="video-framerate">
+                     <option value="auto" selected>Auto (Recommended)</option>
+                     <option value="source">Same as source</option>
+                     <option value="60">60</option>
+                     <option value="50">50</option>
+                     <option value="30">30</option>
+                     <option value="29.97">29.97</option>
+                     <option value="25">25</option>
+                     <option value="24">24</option>
+                     <option value="15">15</option>
+                 </select>
+             </div>
+            <div class="setting-item">
+                <label for="video-quality">Quality Preset:</label>
+                <select id="video-quality">
+                    <option value="standard" selected>Standard</option>
+                    <option value="high">High Quality</option>
+                    <option value="low">Low Quality (Smaller File)</option>
+                    <option value="custom">Custom (Use Bitrate)</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <label for="video-bitrate">Video Bitrate (kbps):</label>
+                <select id="video-bitrate">
+                    <option value="auto" selected>Auto (Based on Quality)</option>
+                    <option value="8000">8000 (High)</option>
+                    <option value="5000">5000</option>
+                    <option value="3000">3000 (Standard)</option>
+                    <option value="1500">1500</option>
+                    <option value="1000">1000 (Low)</option>
+                    <option value="custom">Custom Input</option>
+                </select>
+                </div>
+        </div>
+    </div>
+
+    <div class="setting-section">
+        <h3>Audio Settings</h3>
+        <div class="setting-grid">
+            <div class="setting-item">
+                <label for="audio-encoder">Encoder:</label>
+                <select id="audio-encoder">
+                    <option value="aac" selected>AAC (Default)</option>
+                    <option value="mp3">MP3</option>
+                    <option value="opus">Opus (Efficient)</option>
+                    <option value="ac3">AC3</option>
+                    <option value="copy">Copy Stream (No Re-encoding)</option>
+                </select>
+            </div>
+             <div class="setting-item">
+                 <label for="audio-channel">Channels:</label>
+                 <select id="audio-channel">
+                     <option value="auto" selected>Auto (Same as source)</option>
+                     <option value="stereo">Stereo (2 Channels)</option>
+                     <option value="mono">Mono (1 Channel)</option>
+                     <option value="5.1">5.1 Surround</option>
+                 </select>
+             </div>
+            <div class="setting-item">
+                <label for="audio-samplerate">Sample Rate (Hz):</label>
+                <select id="audio-samplerate">
+                    <option value="auto" selected>Auto (Same as source)</option>
+                    <option value="48000">48000 Hz</option>
+                    <option value="44100">44100 Hz (CD Quality)</option>
+                    <option value="32000">32000 Hz</option>
+                    <option value="22050">22050 Hz</option>
+                </select>
+            </div>
+            <div class="setting-item">
+                <label for="audio-bitrate">Audio Bitrate (kbps):</label>
+                <select id="audio-bitrate">
+                    <option value="auto" selected>Auto (Recommended)</option>
+                    <option value="320">320 (High Quality)</option>
+                    <option value="256">256</option>
+                    <option value="192">192 (Good Quality)</option>
+                    <option value="128">128 (Standard)</option>
+                    <option value="96">96</option>
+                    <option value="64">64 (Low Quality)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button type="button" class="converter-button button-cancel" id="cancel-button">Cancel</button>
+        <button type="button" class="converter-button button-convert" id="convert-button" disabled>Convert</button> </div>
+
+    <div id="status-message">
+         Status messages will appear here.
+     </div>
+
+</div>
+
+<script>
+    // JavaScript Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('video-file-input');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const convertButton = document.getElementById('convert-button');
+        const cancelButton = document.getElementById('cancel-button');
+        const statusMessage = document.getElementById('status-message');
+
+        let selectedFile = null;
+
+        // --- Event Listener for File Input ---
+        fileInput.addEventListener('change', function(event) {
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                fileNameDisplay.textContent = `Selected: ${selectedFile.name}`;
+                convertButton.disabled = false; // Enable convert button
+                statusMessage.style.display = 'none'; // Hide previous status
+                statusMessage.className = ''; // Reset status class
+            } else {
+                fileNameDisplay.textContent = 'No file selected';
+                selectedFile = null;
+                convertButton.disabled = true; // Disable convert button
+            }
+        });
+
+        // --- Function to Get Selected Settings ---
+        function getSelectedSettings() {
+            const settings = {
+                fileName: selectedFile ? selectedFile.name : 'N/A',
+                fileSize: selectedFile ? (selectedFile.size / 1024 / 1024).toFixed(2) + ' MB' : 'N/A', // Size in MB
+                videoEncoder: document.getElementById('video-encoder').value,
+                videoResolution: document.getElementById('video-resolution').value,
+                videoZoom: document.getElementById('video-zoom').value,
+                videoFrameRate: document.getElementById('video-framerate').value,
+                videoQuality: document.getElementById('video-quality').value,
+                videoBitrate: document.getElementById('video-bitrate').value,
+                audioEncoder: document.getElementById('audio-encoder').value,
+                audioChannel: document.getElementById('audio-channel').value,
+                audioSampleRate: document.getElementById('audio-samplerate').value,
+                audioBitrate: document.getElementById('audio-bitrate').value,
+            };
+            return settings;
+        }
+
+        // --- Event Listener for Convert Button ---
+        convertButton.addEventListener('click', function() {
+            if (!selectedFile) {
+                alert('Please select a video file first.');
+                return;
+            }
+
+            const settings = getSelectedSettings();
+
+            // 1. Show "Processing" status (Simulation)
+            statusMessage.textContent = `Simulating conversion for "${settings.fileName}"... Please wait.`;
+            statusMessage.className = 'processing'; // Apply yellow style
+            statusMessage.style.display = 'block';
+            convertButton.disabled = true; // Disable button during simulation
+            cancelButton.disabled = true;
+
+            // 2. Simulate delay (e.g., 2-3 seconds)
+            setTimeout(() => {
+                // 3. Show Final "Result" (Explanation of Limitation)
+                let settingsSummary = '<ul>';
+                for (const key in settings) {
+                    if (key !== 'fileName' && key !== 'fileSize') { // Don't repeat file info in list
+                         let formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()); // Format key nicely
+                         settingsSummary += `<li><strong>${formattedKey}:</strong> ${settings[key]}</li>`;
+                    }
+                }
+                settingsSummary += '</ul>';
+
+                statusMessage.innerHTML = `
+                    <strong>Simulation Complete!</strong><br>
+                    File: <strong>${settings.fileName}</strong> (${settings.fileSize})<br><br>
+                    <strong>Selected Settings:</strong>
+                    ${settingsSummary}
+                    <hr>
+                    <strong>Important:</strong> Actual video conversion cannot be performed directly in your browser using only HTML/JavaScript. This interface demonstrates the settings selection process. In a real application, this file and settings would be sent to a server for processing.
+                `;
+                statusMessage.className = 'final'; // Apply blue info style
+
+                // Re-enable buttons after simulation
+                convertButton.disabled = false;
+                cancelButton.disabled = false;
+
+            }, 2500); // Simulate a 2.5 second process
+
+            console.log('Conversion Initiated (Simulation)');
+            console.log('Selected File:', selectedFile);
+            console.log('Selected Settings:', settings);
+        });
+
+        // --- Event Listener for Cancel Button ---
+        cancelButton.addEventListener('click', function() {
+            // Reset file input
+            fileInput.value = null; // Clears the selected file
+            fileNameDisplay.textContent = 'No file selected';
+            selectedFile = null;
+
+            // Disable convert button
+            convertButton.disabled = true;
+
+            // Hide status message
+            statusMessage.style.display = 'none';
+             statusMessage.className = '';
+
+            // Optional: Reset dropdowns to default (uncomment if needed)
+            /*
+            document.getElementById('video-encoder').value = 'h264';
+            document.getElementById('video-resolution').value = 'source';
+            document.getElementById('video-zoom').value = 'letterbox';
+            document.getElementById('video-framerate').value = 'auto';
+            document.getElementById('video-quality').value = 'standard';
+            document.getElementById('video-bitrate').value = 'auto';
+            document.getElementById('audio-encoder').value = 'aac';
+            document.getElementById('audio-channel').value = 'auto';
+            document.getElementById('audio-samplerate').value = 'auto';
+            document.getElementById('audio-bitrate').value = 'auto';
+            */
+
+            console.log('Operation Cancelled. Form reset.');
+        });
+    });
+</script>
+
+</body>
+</html>
